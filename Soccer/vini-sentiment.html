@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Analysis Summary</title>
+    <link rel="stylesheet" href="soccer.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Sentiment Analysis Summary</h1>
+        
+        <h2>Objective</h2>
+        <p>The goal of this project was to analyze public sentiment regarding Vini Jr.'s candidacy for the Ballon d'Or using comments from Reddit.</p>
+
+        <h2>Model Used</h2>
+        <p>The sentiment analysis was conducted using the <strong>DistilBERT</strong> model, specifically the version <strong>distilbert-base-uncased-finetuned-sst-2-english</strong> with revision <strong>af0f99b</strong>.</p>
+
+        <h2>Process Overview</h2>
+        <ol>
+            <li>Fetched comments from the <a href="https://www.reddit.com/r/soccer/">r/soccer subreddit</a> related to Vini Jr. and the Ballon d'Or.</li>
+            <li>Utilized the Hugging Face Transformers library to load the DistilBERT model for sentiment analysis.</li>
+            <li>Classified each comment as <strong>POSITIVE</strong> or <strong>NEGATIVE</strong> based on the model's predictions.</li>
+            <li>Aggregated the results to gain insight into public sentiment about Vini Jr.'s performance.</li>
+        </ol>
+
+        <h2>Sentiment Analysis Results</h2>
+        <p>Here are the results of the sentiment analysis:</p>
+        <pre>
+            Counter({'NEGATIVE': 1685, 'POSITIVE': 807})
+        </pre>
+        <img src="viniSentiment.png" alt="Vini Jr sentiment">
+
+        <h2>Example Results</h2>
+        <pre>
+            Comment: "He scored a last minute bicycle kick to keep his team in the tournament. <br>                      That's already better than 85% of players at Euros."
+            Sentiment: [{'label': 'POSITIVE', 'score': 0.9994}]
+
+            Comment: "I never said that tho, it wasn’t good, it wasn’t bad."
+            Sentiment: [{'label': 'POSITIVE', 'score': 0.9884}]
+        </pre>
+        <p>For more detailed results, you can view the <a href="results.txt" target="_blank">results.txt</a> file.</p>
+
+        <h2>Conclusion</h2>
+        <p>The sentiment analysis indicates a clear public perception regarding Vini Jr.'s candidacy for the Ballon d'Or, with a significant number of comments reflecting negative sentiments (1,685) compared to positive ones (807). This data resonates with my perspective of Vini Jr.</p>
+
+<p>Many comments express dissatisfaction with Vini Jr.'s contributions, particularly highlighting his inconsistent performances for the Brazilian national team. Vini's is the modern day system's player, which has led to a consensus that he did not merit the accolade this time around.</p>
+
+<p>Moreover, the sentiment analysis echoes a sentiment of discontent regarding the broader context of the Ballon d'Or race. This suggests a collective feeling that, while Vini possesses talent, his performance for his nationald team and likability may hinder support for his candidacy.</p>
+
+<p>In conclusion, the public sentiment around Vini Jr.'s Ballon d'Or aspirations reflects a critical viewpoint, emphasizing that his performances do not currently align with the expectations set by past football greats like Ronaldo and Messi.</p>
+
+    </div>
+
+    <div class="back-button">
+        <a href="../index.html" class="blog-link">Back to Home</a>
+    </div>
+
+</body>
+</html>

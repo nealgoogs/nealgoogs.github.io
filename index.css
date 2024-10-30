@@ -6,24 +6,27 @@
   
   body {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: flex-start;
     height: 100vh;
-    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    background: linear-gradient(135deg, #f0f0f0, #d9d9d9);
     font-family: Arial, sans-serif;
-    color: white;
+    color: #333;
     overflow: hidden;
+    padding: 20px;
   }
   
   .container {
     text-align: center;
     animation: fadeIn 2s ease-in;
+    width: 100%;
   }
   
   h1 {
     font-size: 3rem;
     letter-spacing: 2px;
     margin-bottom: 0.5rem;
+    color: #2c3e50;
   }
   
   .subtitle {
@@ -32,7 +35,7 @@
   }
   
   button {
-    background: #ff7f50;
+    background: #3498db;
     border: none;
     padding: 0.75rem 1.5rem;
     color: white;
@@ -43,7 +46,7 @@
   }
   
   button:hover {
-    background: #ff6347;
+    background: #2980b9;
   }
   
   @keyframes fadeIn {
@@ -62,14 +65,14 @@
     display: inline-block;
     margin-top: 1rem;
     font-size: 1.2rem;
-    color: white;
+    color: #2980b9;
     text-decoration: none;
-    border: 1px solid white; /* Optional: adds a border to the link */
-    padding: 0.5rem 1rem; /* Optional: adds padding */
-    border-radius: 5px; /* Optional: rounds the corners */
+    border: 1px solid #2980b9;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
   }
 
   .blog-link:hover {
-    background: rgba(255, 255, 255, 0.2); /* Optional: adds a hover effect */
+    background: rgba(41, 128, 185, 0.2);
   }
   
