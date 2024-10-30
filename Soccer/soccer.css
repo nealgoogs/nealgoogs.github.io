@@ -2,9 +2,9 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-  }
-  
-  body {
+}
+
+body {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -13,52 +13,26 @@
     font-family: Arial, sans-serif;
     color: white;
     overflow: hidden;
-  }
-  
-  .container {
+}
+
+.container {
     text-align: center;
     animation: fadeIn 2s ease-in;
-  }
-  
-  h1 {
+}
+
+h1 {
     font-size: 3rem;
     letter-spacing: 2px;
-    margin-bottom: 0.5rem;
-  }
-  
-  .subtitle {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-  }
-  
-  button {
-    background: #ff7f50;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    color: white;
-    font-size: 1rem;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  
-  button:hover {
-    background: #ff6347;
-  }
-  
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(-10%);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
+    margin-bottom: 1rem; /* Increased margin for better spacing */
+}
 
-  .blog-link {
+p {
+    font-size: 1.2rem; /* Font size for the paragraph */
+    margin: 1rem 0; /* Margin for spacing around the paragraph */
+    line-height: 1.5; /* Improved line height for readability */
+}
+
+.blog-link {
     display: inline-block;
     margin-top: 1rem;
     font-size: 1.2rem;
@@ -67,9 +41,19 @@
     border: 1px solid white; /* Optional: adds a border to the link */
     padding: 0.5rem 1rem; /* Optional: adds padding */
     border-radius: 5px; /* Optional: rounds the corners */
-  }
+}
 
-  .blog-link:hover {
+.blog-link:hover {
     background: rgba(255, 255, 255, 0.2); /* Optional: adds a hover effect */
-  }
-  
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
