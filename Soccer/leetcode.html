@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Java vs Python: LEETCODE</title>
+  <link rel="stylesheet" href="soccer.css">
+  <!-- Prism.js stylesheet -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+<!-- Prism.js script -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<!-- Include the language components you need -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Java vs Python: LEETCODE</h1>
+    
+    <h2>Let's Take This Problem</h2>
+    <p>
+      Given two strings, <em>a</em> and <em>b</em>, return the number of positions where they contain the same length-2 substring.
+      For example, with "xxcaazz" and "xxbaaz," we would get 3 because the substrings "xx," "aa," and "az" appear in the same place in both strings.
+    </p>
+    
+    <p><strong>Examples:</strong></p>
+    <p>stringMatch("xxcaazz", "xxbaaz") → 3</p>
+    <p>stringMatch("abc", "abc") → 2</p>
+    <p>stringMatch("abc", "axc") → 0</p>
+
+    <h3>Java Version</h3>
+    <pre><code class="language-java">
+public int stringMatch(String a, String b) {
+    // Figure out which string is shorter
+    int len = Math.min(a.length(), b.length());
+    int count = 0;
+    
+    // Look at both substrings starting at i
+    for (int i = 0; i < len - 1; i++) {
+        String aSub = a.substring(i, i + 2);
+        String bSub = b.substring(i, i + 2);
+        if (aSub.equals(bSub)) {  // Use .equals() with strings
+            count++;
+        }
+    }
+    return count;
+}
+    </code></pre>
+        
+    <h3>Python Version</h3>
+    <pre><code class="language-python">
+def string_match(a: str, b: str) -> int:
+
+    # Determine the shorter length of the two strings
+    length = min(len(a), len(b))
+    count = 0
+    
+    # Loop through each substring position
+    for i in range(length - 1):
+        a_sub = a[i:i+2]
+        b_sub = b[i:i+2]
+        if a_sub == b_sub:
+            count += 1
+            
+    return count
+    </code></pre>
+
+    <h2>Conclusion</h2>
+    <p>
+      The Java and Python versions are very similar, but Python's syntax tends to be less verbose, making it more concise. The language you choose should ultimately depend on your familiarity and project requirements. Java’s structure can help with clarity in larger projects, while Python often allows faster prototyping for tasks like algorithm challenges.
+    </p>
+    <p>
+      While tools like AI can solve these types of problems, other key skills become even more critical, such as design patterns, code scalability, and maintaining readability. These skills help developers handle complex applications and improve performance—areas where human expertise truly shines.
+    </p>
+    <p>So, beyond just the language choice, focusing on fundamentals and best practices can provide a strong foundation for problem-solving.</p>
+    
+    <a href="../index.html" class="blog-link">Back to Home</a>
+  </div>
+</body>
+</html>

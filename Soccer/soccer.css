@@ -50,6 +50,44 @@ p {
     color: #333; /* Dark color for better contrast */
 }
 
+pre {
+    background-color: #2e2e2e; /* Dark background for code blocks */
+    color: #f8f8f2; /* Light text color */
+    padding: 15px; /* Add padding inside the code block */
+    border-radius: 8px; /* Rounded corners for the code block */
+    overflow-x: auto; /* Horizontal scroll for overflow */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    margin: 1rem 0; /* Space around the code block */
+}
+
+code {
+    font-family: 'Courier New', Courier, monospace; /* Monospace font for code */
+    font-size: 1rem; /* Font size for code text */
+    color: #f8f8f2; /* Light color for inline code */
+}
+
+/* Syntax Highlighting */
+.language-java .token.keyword,
+.language-python .token.keyword {
+    color: #66d9ef; /* Blueish color for keywords */
+}
+
+.language-java .token.string,
+.language-python .token.string {
+    color: #a6e22e; /* Green color for strings */
+}
+
+.language-java .token.comment,
+.language-python .token.comment {
+    color: #75715e; /* Gray for comments */
+    font-style: italic; /* Italicize comments */
+}
+
+.language-java .token.function,
+.language-python .token.function {
+    color: #fd971f; /* Orange for function names */
+}
+
 .blog-link {
     display: inline-block;
     margin-top: 1rem;
