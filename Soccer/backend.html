@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Image Generator</title>
+  <link rel="stylesheet" href="soccer.css">
+</head>
+<body>
+  <div class="container">
+    <h1>AI Image Generator</h1>
+    <form id="imageForm">
+      <label for="textInput">Enter a Description:</label>
+      <input type="text" class="wide-input" id="textInput" placeholder="e.g., tiger in a hat resting on a chair" required>
+      <button type="submit">Generate Image</button>
+    </form>
+    <div id="result">
+      <img id="generatedImage" src="" alt="" style="display:none;">
+      <p id="error" style="color:red; display:none;"></p>
+    </div>
+    
+    <section id="about">
+      <h2>About This Project</h2>
+      <p>The image generation can be slow sometimes so give it up to 10 seconds before an image is generated.</p>
+      <p>This project is a simple AI image generator that takes a text description and generates an image using the Pollinations API. The backend is built in Go, which handles the API requests and manages CORS for frontend access.</p>
+      <p>The Pollinations API allows users to generate images based on descriptive text. You can find more about their API <a href="https://pollinations.ai" target="_blank">here</a>.</p>
+      <p>This project demonstrates how to connect a frontend application with a backend server and make API calls to generate dynamic content based on user input.</p>
+      <p>The source code for this project is available on my <a href="https://github.com/nealgoogs/GoBackend" target="_blank">GitHub</a> for those interested in exploring the implementation further.</p>
+    </section>
+    <a href="../index.html" class="blog-link">Back to Home</a>
+  </div>
+  <script src="backend.js"></script>
+</body>
+</html>

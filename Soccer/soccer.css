@@ -118,3 +118,12 @@ code {
     margin: 20px; /* Add margin for spacing */
     text-align: center; /* Center the button */
 }
+
+
+.wide-input {
+    width: 100%; /* Adjust the percentage as needed for responsiveness */
+    max-width: 600px; /* Set a max width if desired */
+    padding: 10px; /* Optional: adds some padding for better appearance */
+    font-size: 16px; /* Optional: increases font size for readability */
+    box-sizing: border-box; /* Ensures padding is included in the total width */
+}
