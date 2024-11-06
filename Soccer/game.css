@@ -8,7 +8,7 @@ body {
 }
 
 /* Container styling */
-.container {
+.container{
     max-width: 800px; /* Limit the width of the container */
     margin: 0 auto; /* Center the container */
     padding: 20px;
@@ -53,3 +53,6 @@ li:hover {
     background-color: #dcdfe1; /* Slightly darker background on hover */
 }
 
+.fix{
+    color: red!important;
+}
