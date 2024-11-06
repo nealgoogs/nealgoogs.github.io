@@ -53,17 +53,3 @@ li:hover {
     background-color: #dcdfe1; /* Slightly darker background on hover */
 }
 
-/* Link styling */
-.blog-link {
-    display: block; /* Make the link a block element */
-    text-align: center; /* Center the link */
-    margin-top: 20px; /* Space above the link */
-    color: #2980b9; /* Blue color for the link */
-    text-decoration: none; /* Remove underline */
-    font-weight: bold; /* Bold text */
-}
-
-/* Link hover effect */
-.blog-link:hover {
-    text-decoration: underline; /* Underline on hover */
-}
