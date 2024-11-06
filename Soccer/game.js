@@ -3,7 +3,7 @@
 // Function to fetch match data from the backend
 async function fetchMatches() {
     try {
-        const response = await fetch('http://localhost:8080/api/epl-matches'); // Ensure this URL is correct
+        const response = await fetch('https://gobackend-2b8d.onrender.com/api/epl-matches'); // Ensure this URL is correct
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
