@@ -56,3 +56,11 @@ li:hover {
 .fix{
     color: red!important;
 }
+
+.crossthrough {
+    font-size: 2rem;
+    color: #333;
+    text-decoration: line-through; /* Simple strikethrough */
+    text-decoration-thickness: 4px; /* Thicker line for emphasis */
+    text-decoration-color: red; /* Color of the line */
+  }
