@@ -609,6 +609,61 @@ footer {
     font-size: 1.2em
 }
 
+#certification {
+    padding: 50px 15px;
+    text-align: center; /* Center align the entire section */
+}
+
+#certification .heading {
+    display: block; /* Ensure it behaves like a block element */
+    margin: 0 auto 30px auto; /* Center the heading and add spacing below */
+    text-align: center; /* Center the text inside the heading */
+}
+
+#certification .education-block {
+    max-width: 600px;
+    margin: 20px auto; /* Center align the block */
+    padding: 20px;
+    border: 1px solid #dcd9d9; /* Subtle border */
+    background: #f9f9f9; /* Light background color */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    text-align: center;
+}
+
+#certification .education-block h3 {
+    font-size: 1.8em;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #374054; /* Heading color */
+}
+
+#certification .education-block span {
+    display: block;
+    font-size: 1em;
+    color: #74808a; /* Subtext color */
+    margin-bottom: 15px;
+}
+
+#certification .education-block a {
+    display: inline-block;
+    font-size: 1em;
+    text-decoration: none;
+    color: #fff;
+    background-color: #3498db; /* Button background color */
+    padding: 10px 20px;
+    border-radius: 25px; /* Rounded button */
+    transition: background 0.3s, color 0.3s;
+}
+
+#certification .education-block a:hover {
+    background-color: #217dbb; /* Darker background on hover */
+    color: #fff; /* Keep text white */
+}
+
+
+
+
 #contact {
     padding: 50px 15px;
     background: #3498db;
