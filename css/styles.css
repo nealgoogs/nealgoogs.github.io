@@ -10,6 +10,20 @@
     that don't come from third party libraries. This file gets compiled using
     Gulp and send to the /css folder which is then loaded on the page.
 */
+
+:root {
+  --brand-blue: #3498db;
+  --brand-dark: #217dbb;
+  --text-primary: #374054;
+  --text-secondary: #74808a;
+  --bg-light: #f2f2f5;
+  --radius: 0.5rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 2rem;
+  --font-sans: 'Lato', sans-serif;
+}
+
 body {
     font-family: 'Lato', sans-serif;
     font-size: 16px
@@ -65,6 +79,7 @@ body.active {
 
 header {
     position: absolute;
+    padding-top: 20px;
     top: 0;
     left: 0;
     right: 0;
@@ -78,22 +93,23 @@ header {
 
 header ul {
     display: inline-block;
-    background: #fff;
     text-align: center;
-    padding: 10px;
-    margin: 0;
-    border-bottom-right-radius: 4px;
-    border-bottom-left-radius: 4px
+    padding-left: 5px;
 }
 
 header li {
-    display: inline-block
+    display: inline-block;
 }
 
 header a {
     display: block;
-    color: #3498db;
-    padding: 10px
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
+    padding: 15px;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+    text-align: center;
 }
 
 header a:hover {
@@ -141,11 +157,11 @@ header.sticky {
     width: 100%;
     background: #fff;
     font-size: 1.5em;
-    padding-right: 15px;
-    padding-top: 10px;
     cursor: pointer;
-    color: #3498db
+    color: #3498db;
 }
+
+
 
 #mobile-menu-close span {
     font-size: 0.5em;
@@ -262,19 +278,18 @@ footer {
 
 #lead {
     position: relative;
-    height: 100vh;
-    min-height: 500px;
-    max-height: 1080px;
-    background: url(../images/coding.jpg);
+    height: 50vh; /* keep full screen height */
+    background: url(../images/vibe_coding.jpg) no-repeat top center;
     background-size: cover;
-    padding: 15px;
-    overflow: hidden
+    background-position: top;
+    overflow: hidden;
 }
+
 
 #lead-content {
     position: absolute;
     z-index: 10;
-    top: 50%;
+    top: 55%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center
@@ -288,7 +303,7 @@ footer {
 #lead-content h1 {
     color: #fff;
     font-weight: 900;
-    font-size: 5em;
+    font-size: 3em;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     line-height: 0.9em
@@ -298,47 +313,16 @@ footer {
     color: #a0cfee;
     font-weight: 500;
     font-size: 2.25em;
-    margin-bottom: 15px
 }
 
 #lead-overlay {
     position: absolute;
-    height: 100%;
+    height: 100%;  /* match full height */
     width: 100%;
     top: 0;
-    right: 0;
-    bottom: 0;
     left: 0;
     background: rgba(33, 125, 187, 0.8);
-    z-index: 1
-}
-
-#lead-down {
-    position: absolute;
-    left: 0;
-    right: 0;
-    width: 100%;
-    text-align: center;
-    z-index: 10;
-    bottom: 15px;
-    color: #fff
-}
-
-#lead-down span {
-    cursor: pointer;
-    display: block;
-    margin: 0 auto;
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    border: 3px solid #a0cfee;
-    text-align: center
-}
-
-#lead-down i {
-    animation: pulsate 1.5s ease;
-    animation-iteration-count: infinite;
-    padding-top: 5px
+    z-index: 1;
 }
 
 @keyframes pulsate {
@@ -356,7 +340,8 @@ footer {
 }
 
 #about {
-    padding: 75px 15px;
+    padding: 50px 15px;
+    text-align: center;
     border-bottom: 1px solid #dcd9d9
 }
 
@@ -385,29 +370,18 @@ footer {
     max-width: 1000px
 }
 
-#experience-timeline:before {
-    position: absolute;
-    content: '';
-    top: 0;
-    bottom: 0;
-    left: 303px;
-    right: auto;
-    height: 100%;
-    width: 3px;
-    background: #3498db;
-    z-index: 0
+/* Center the block, give it padding, border and rounded corners */
+#experience .experience-block {
+  max-width: 700px;       /* limits how wide it stretches */
+  margin: 0 auto 30px;    /* auto-center horizontally, 30px bottom space */
+  padding: 20px;          /* space inside the box */
+  border: 1px solid #dcd9d9;
+  border-radius: 8px;     /* rounded corners */
+  background: #fff;       /* optional: make it stand out */
+  text-align: left;     /* center the paragraph text */
 }
 
-#experience-timeline:after {
-    position: absolute;
-    content: '';
-    width: 3px;
-    height: 40px;
-    background: #3498db;
-    background: linear-gradient(to bottom, #3498db, rgba(52, 152, 219, 0));
-    top: 100%;
-    left: 303px
-}
+
 
 .vtimeline-content {
     margin-left: 350px;
@@ -523,91 +497,6 @@ footer {
     padding: 0 0 0 15px
 }
 
-#projects {
-    padding: 50px 15px;
-    border-bottom: 1px solid #dcd9d9;
-    text-align: center
-}
-
-#projects h2 {
-    color: #374054;
-    margin-bottom: 50px
-}
-
-.project {
-    position: relative;
-    max-width: 900px;
-    margin: 0 auto 30px;
-    overflow: hidden;
-    background: #fff;
-    border-radius: 4px;
-    display: flex; /* Use Flexbox to handle layout */
-    align-items: center; /* Center elements vertically */
-}
-
-.project-image {
-    flex: 0 0 300px; /* Fixed width for image */
-    max-width: 100%; /* Ensure it’s responsive */
-}
-
-.project-info {
-    padding: 15px;
-    margin-left: 20px; /* Spacing between image and text */
-    color: #374054;
-}
-
-.project-info h3 {
-    font-size: 1.5em;
-    font-weight: 300;
-    color: #374054;
-    margin: 0 0 15px;
-}
-
-.project-info p {
-    color: #74808a;
-    margin: 0 0 15px;
-    font-size: 0.9em;
-}
-
-.no-image .project-info {
-    position: relative;
-    margin: 0;
-    padding: 30px 15px;
-    transform: none;
-    text-align: center; /* Center text when no image */
-}
-
-#more-projects {
-    display: none
-}
-
-#skills {
-    padding: 50px 15px;
-    text-align: center
-}
-
-#skills h2 {
-    color: #374054;
-    margin-bottom: 50px
-}
-
-#skills ul {
-    display: block;
-    margin: 0 auto;
-    padding: 0;
-    max-width: 800px
-}
-
-#skills li {
-    display: inline-block;
-    margin: 7px;
-    padding: 5px 10px;
-    color: #374054;
-    background: #e4e4ea;
-    list-style: none;
-    cursor: default;
-    font-size: 1.2em
-}
 
 #certification {
     padding: 50px 15px;
@@ -787,6 +676,32 @@ footer {
     padding: 0 0 0 15px
 }
 
+
+/* —————————————————————————————
+   Center About Me just like other sections
+   ————————————————————————————— */
+#about .container {
+  max-width: 700px;    /* match experience/education width */
+  margin: 0 auto;      /* center on page */
+}
+
+#about .row {
+  display: flex;               /* turn off the 4/8 grid */
+  flex-direction: column;      /* stack heading & text */
+  align-items: center;         /* center them */
+  text-align: center;          /* center text inside */
+}
+
+#about .heading {
+  margin-bottom: 15px;         /* space below “About Me” */
+}
+
+#about p {
+  max-width: 600px;            /* keep line-length neat */
+  margin: 0;                   /* remove default margins */
+  line-height: 1.5;            /* improve readability */
+}
+
 @media only screen and (max-width: 750px) {
 
     #experience-timeline:before,
@@ -864,12 +779,12 @@ footer {
         overflow-y: auto;
         box-shadow: none;
         border-radius: 0;
-        width: 100%
+        width: 100%;
     }
 
     #menu li {
         display: block;
-        margin-bottom: 10px
+        margin-bottom: 0px;
     }
 
     #lead-content h1 {
@@ -891,18 +806,6 @@ footer {
     .education-block h3,
     .education-block span {
         float: none
-    }
-
-    .project-image {
-        display: none
-    }
-
-    .project-info {
-        position: relative;
-        margin: 0;
-        padding: 30px 15px;
-        top: auto;
-        transform: none
     }
 
     footer {
