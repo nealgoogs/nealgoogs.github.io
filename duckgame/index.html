@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Duck Hunt (Desktop)</title>
+    <style>
+      :root {
+        --bg: #0a1b2a;
+        --panel: #0f2436;
+        --accent: #27c2ff;
+        --accent-2: #ffd166;
+        --text: #e6f1ff;
+        --danger: #ff6b6b;
+        --success: #7ef7a1;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background: radial-gradient(1200px 700px at 50% 20%, #1b3b5a 0%, var(--bg) 65%);
+        color: var(--text);
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      }
+      .wrap {
+        height: 100%;
+        display: grid;
+        place-items: center;
+        user-select: none;
+      }
+
+      .board {
+        position: relative;
+        width: 960px;
+        height: 540px;
+        border-radius: 14px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.06);
+        background: linear-gradient(#7fd3ff 0%, #a9e4ff 45%, #e8f7ff 55%, #8bd477 56%, #5bb85a 100%);
+        overflow: hidden;
+      }
+
+      canvas#game {
+        position: absolute;
+        inset: 0;
+        width: 960px; /* Desktop-only fixed size */
+        height: 540px;
+        display: block;
+        cursor: none;
+      }
+
+      .hud {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 12px;
+        border-radius: 10px;
+        background: rgba(10, 27, 42, 0.35);
+        backdrop-filter: blur(6px);
+        font-weight: 600;
+        letter-spacing: 0.3px;
+      }
+      .hud .stat {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.06);
+      }
+      .hud .stat .label {
+        opacity: 0.8;
+        font-weight: 500;
+      }
+      .hud .stat .value {
+        color: var(--accent);
+        min-width: 52px;
+        text-align: right;
+      }
+
+      .overlay {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(180deg, rgba(10,27,42,0.65) 0%, rgba(10,27,42,0.85) 100%);
+        text-align: center;
+      }
+      .panel {
+        width: 560px;
+        max-width: 92%;
+        background: var(--panel);
+        border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+        border-radius: 14px;
+        padding: 22px 24px;
+      }
+      .title {
+        margin: 0 0 6px 0;
+        font-size: 28px;
+        font-weight: 800;
+        letter-spacing: 0.2px;
+      }
+      .subtitle {
+        margin: 0 0 16px 0;
+        opacity: 0.85;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px 16px;
+        margin: 14px 0 18px 0;
+      }
+      .grid .cell {
+        background: rgba(255,255,255,0.06);
+        border-radius: 10px;
+        padding: 10px 12px;
+        text-align: left;
+      }
+      .btns { display: flex; gap: 10px; justify-content: center; }
+      button {
+        appearance: none;
+        border: none;
+        background: linear-gradient(180deg, #1aa0d4, #198fbe);
+        color: white;
+        padding: 10px 16px;
+        border-radius: 10px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        cursor: pointer;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+      }
+      button.secondary {
+        background: linear-gradient(180deg, #5c6b7a, #495663);
+      }
+      a.small {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      .hide { display: none !important; }
+      /* Controls layout on menu */
+      .controls-layout { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin: 8px 0 12px 0; }
+      .control { flex: 1 1 0; background: rgba(255,255,255,0.06); border-radius: 10px; padding: 12px 14px; text-align: center; min-height: 56px; display: grid; place-items: center; }
+      .control .kbd { display: inline-block; font-weight: 800; letter-spacing: .2px; }
+      .control.left .kbd { color: var(--accent-2); }
+      .control.right .kbd { color: var(--accent); }
+      .mouse-diagram { flex: 0 0 auto; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="board" id="board">
+        <canvas id="game"></canvas>
+        <div class="hud" id="hud">
+          <div class="stat">
+            <span class="label">Score</span>
+            <span class="value" id="score">0</span>
+          </div>
+          <div class="stat">
+            <span class="label">Time</span>
+            <span class="value" id="time">60.0</span>
+          </div>
+          <div class="stat">
+            <span class="label">High</span>
+            <span class="value" id="high">0</span>
+          </div>
+        </div>
+
+        <div class="overlay" id="overlay">
+          <div class="panel">
+            <h2 class="title">Duck Hunt (Desktop)</h2>
+            <p class="subtitle">Left-click to shoot · Hold Right-click to aimbot the crosshair</p>
+            <div class="controls-layout">
+              <div class="control left"><span class="kbd">Left-click</span> · Shoot</div>
+              <div class="mouse-diagram">
+                <svg width="220" height="180" viewBox="0 0 220 180" aria-label="Mouse" role="img">
+                  <defs>
+                    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.35" />
+                    </filter>
+                  </defs>
+                  <g transform="translate(60,16)" filter="url(#shadow)">
+                    <rect x="0" y="0" rx="26" ry="26" width="100" height="150" fill="#1b2c3f" stroke="rgba(255,255,255,0.2)" />
+                    <path d="M0,28 h48 v46 h-48 z" fill="#ffd166" stroke="rgba(255,255,255,0.25)" />
+                    <path d="M52,28 h48 v46 h-48 z" fill="#27c2ff" stroke="rgba(255,255,255,0.25)" />
+                    <circle cx="50" cy="62" r="6" fill="#cbd5e1" />
+                  </g>
+                </svg>
+              </div>
+              <div class="control right"><span class="kbd">Right-click (hold)</span> · Aimbot</div>
+            </div>
+            <div class="btns">
+              <button id="startBtn">Start Game</button>
+              <button id="exitBtn" class="secondary" onclick="window.location.href='../index.html'">Exit to Main Page</button>
+            </div>
+            <p style="margin-top:12px; opacity:.8; font-size: 12px;">Desktop only · Fixed size 960×540</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        "use strict";
+
+        /**
+         * Canvas setup with devicePixelRatio scaling
+         */
+        const canvas = document.getElementById("game");
+        const ctx = canvas.getContext("2d");
+        const cssWidth = 960;
+        const cssHeight = 540;
+        function resizeForDPR() {
+          const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+          canvas.style.width = cssWidth + "px";
+          canvas.style.height = cssHeight + "px";
+          canvas.width = Math.round(cssWidth * dpr);
+          canvas.height = Math.round(cssHeight * dpr);
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+        resizeForDPR();
+
+        // Prevent context menu on right-click for cleaner experience
+        canvas.addEventListener("contextmenu", (e) => e.preventDefault());
+
+        /**
+         * Game state
+         */
+        const overlay = document.getElementById("overlay");
+        const startBtn = document.getElementById("startBtn");
+        const scoreEl = document.getElementById("score");
+        const timeEl = document.getElementById("time");
+        const highEl = document.getElementById("high");
+
+        const GAME_DURATION_MS = 60_000; // 60 seconds
+        const SPAWN_INITIAL_DELAY_MS = 1100;
+        const SPAWN_MIN_DELAY_MS = 260;
+        const SKY_COLOR_TOP = "#7fd3ff";
+        const SKY_COLOR_BOTTOM = "#a9e4ff";
+
+        let rngSeed = Math.floor(Math.random() * 1e9);
+        function rand() {
+          // Simple LCG for consistent behavior across frames if needed
+          rngSeed = (1103515245 * rngSeed + 12345) % 0x80000000;
+          return rngSeed / 0x80000000;
+        }
+
+        /**
+         * Entities
+         */
+        class Duck {
+          constructor(x, y, vx, vy) {
+            this.x = x;
+            this.y = y;
+            this.vx = vx;
+            this.vy = vy;
+            this.radius = 22 + Math.random() * 10; // visual size reference
+            this.wingPhase = Math.random() * Math.PI * 2;
+            this.dead = false;
+            this.dir = Math.sign(vx) || 1; // 1: moving right, -1: moving left
+          }
+        }
+
+        class Particle {
+          constructor(x, y, color) {
+            this.x = x;
+            this.y = y;
+            this.vx = (Math.random() - 0.5) * 240; // px/s
+            this.vy = (Math.random() - 0.5) * 240;
+            this.life = 0.6; // seconds
+            this.radius = 2 + Math.random() * 2;
+            this.color = color || "#fff";
+          }
+        }
+
+        /**
+         * Core game variables
+         */
+        let isRunning = false;
+        let score = 0;
+        let highScore = Number(localStorage.getItem("duck_hunt_high_score") || 0);
+        let startTimestamp = 0;
+        let lastTimestamp = 0;
+        let timeLeftMs = GAME_DURATION_MS;
+        let spawnDelayMs = SPAWN_INITIAL_DELAY_MS;
+        let spawnTimerMs = 0;
+        let ducks = [];
+        let particles = [];
+        // Crosshair & Aimbot
+        let crosshairX = cssWidth / 2;
+        let crosshairY = cssHeight / 2;
+        let aimbotActive = false;
+        const AIMBOT_SPEED = 1400; // px/s movement towards target
+
+        highEl.textContent = highScore.toString();
+
+        function resetGame() {
+          isRunning = false;
+          score = 0;
+          startTimestamp = 0;
+          lastTimestamp = 0;
+          timeLeftMs = GAME_DURATION_MS;
+          spawnDelayMs = SPAWN_INITIAL_DELAY_MS;
+          spawnTimerMs = 0;
+          ducks = [];
+          particles = [];
+          scoreEl.textContent = "0";
+          timeEl.textContent = (timeLeftMs / 1000).toFixed(1);
+        }
+
+        function startGame() {
+          resetGame();
+          isRunning = true;
+          overlay.classList.add("hide");
+          startTimestamp = performance.now();
+          lastTimestamp = startTimestamp;
+          requestAnimationFrame(tick);
+        }
+
+        startBtn.addEventListener("click", startGame);
+
+        /**
+         * Spawn logic: ducks get faster and spawn quicker over time
+         */
+        function spawnDuck() {
+          const fromLeft = Math.random() < 0.5;
+          const margin = 40;
+          const x = fromLeft ? -margin : cssWidth + margin;
+          const y = 90 + Math.random() * (cssHeight - 220);
+          // speed scales with elapsed time
+          const progress = 1 - Math.max(0, timeLeftMs) / GAME_DURATION_MS; // 0..1
+          const baseSpeed = 110 + progress * 180; // px/s
+          const vx = (fromLeft ? 1 : -1) * (baseSpeed + Math.random() * 60);
+          const vy = (-30 + Math.random() * 60);
+          ducks.push(new Duck(x, y, vx, vy));
+        }
+
+        /**
+         * Drawing helpers
+         */
+        function drawBackground() {
+          // Sky already in CSS background; add subtle moving clouds and sun
+          // Sun
+          const sunX = 120;
+          const sunY = 100;
+          const grad = ctx.createRadialGradient(sunX, sunY, 8, sunX, sunY, 80);
+          grad.addColorStop(0, "rgba(255, 239, 161, 0.95)");
+          grad.addColorStop(1, "rgba(255, 239, 161, 0)");
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(sunX, sunY, 80, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Cloud puffs
+          ctx.fillStyle = "rgba(255,255,255,0.85)";
+          const t = performance.now() * 0.00005;
+          for (let i = 0; i < 5; i++) {
+            const cx = (i * 220 + (t * 80) % (cssWidth + 240)) - 120;
+            const cy = 80 + (i % 2) * 30;
+            drawCloud(cx, cy);
+          }
+
+          // Foreground grass ridge
+          const grassGrad = ctx.createLinearGradient(0, cssHeight - 80, 0, cssHeight);
+          grassGrad.addColorStop(0, "#6fce64");
+          grassGrad.addColorStop(1, "#3fa84b");
+          ctx.fillStyle = grassGrad;
+          ctx.fillRect(0, cssHeight - 70, cssWidth, 90);
+        }
+
+        function drawCloud(x, y) {
+          ctx.beginPath();
+          ctx.ellipse(x, y, 42, 26, 0, 0, Math.PI * 2);
+          ctx.ellipse(x + 26, y - 12, 36, 22, 0, 0, Math.PI * 2);
+          ctx.ellipse(x - 28, y - 8, 30, 18, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        function drawDuck(duck) {
+          const { x, y, dir, radius } = duck;
+          ctx.save();
+          ctx.translate(x, y);
+          ctx.scale(dir, 1);
+
+          // Wing flapping
+          duck.wingPhase += 0.25;
+          const flap = Math.sin(duck.wingPhase) * 0.6;
+
+          // Body
+          ctx.fillStyle = "#4f3d2a";
+          ctx.beginPath();
+          ctx.ellipse(0, 0, radius, radius * 0.65, 0, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Belly highlight
+          ctx.fillStyle = "#6a5338";
+          ctx.beginPath();
+          ctx.ellipse(-4, 6, radius * 0.6, radius * 0.42, 0.15, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Head
+          ctx.fillStyle = "#2e6a2c";
+          ctx.beginPath();
+          ctx.arc(radius * 0.9, -radius * 0.2, radius * 0.4, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Eye
+          ctx.fillStyle = "#fff";
+          ctx.beginPath();
+          ctx.arc(radius * 1.05, -radius * 0.26, radius * 0.08, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = "#111";
+          ctx.beginPath();
+          ctx.arc(radius * 1.07, -radius * 0.26, radius * 0.045, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Beak
+          ctx.fillStyle = "#f0a419";
+          ctx.beginPath();
+          ctx.moveTo(radius * 1.3, -radius * 0.2);
+          ctx.lineTo(radius * 1.6, -radius * 0.12);
+          ctx.lineTo(radius * 1.3, -radius * 0.04);
+          ctx.closePath();
+          ctx.fill();
+
+          // Wing (animated)
+          ctx.save();
+          ctx.translate(-radius * 0.25, -radius * 0.15);
+          ctx.rotate(-0.7 + flap);
+          ctx.fillStyle = "#3e2f20";
+          ctx.beginPath();
+          ctx.ellipse(0, 0, radius * 0.7, radius * 0.25, 0.2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+
+          ctx.restore();
+        }
+
+        function drawParticles() {
+          for (const p of particles) {
+            const alpha = Math.max(0, Math.min(1, p.life / 0.6));
+            ctx.fillStyle = `rgba(255,255,255,${alpha.toFixed(3)})`;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        /**
+         * Update loop
+         */
+        function tick(now) {
+          if (!isRunning) return;
+          const dt = Math.min(50, now - lastTimestamp) / 1000; // seconds, clamp
+          lastTimestamp = now;
+
+          timeLeftMs = Math.max(0, GAME_DURATION_MS - (now - startTimestamp));
+          timeEl.textContent = (timeLeftMs / 1000).toFixed(1);
+
+          // Progressive spawn difficulty
+          spawnTimerMs += dt * 1000;
+          // Aimbot movement towards nearest duck
+          if (aimbotActive && ducks.length > 0) {
+            // target nearest duck to current crosshair for natural behavior
+            let target = ducks[0];
+            let bestDist = (ducks[0].x - crosshairX) ** 2 + (ducks[0].y - crosshairY) ** 2;
+            for (let i = 1; i < ducks.length; i++) {
+              const d = ducks[i];
+              const dist = (d.x - crosshairX) ** 2 + (d.y - crosshairY) ** 2;
+              if (dist < bestDist) { target = d; bestDist = dist; }
+            }
+            const dx = target.x - crosshairX;
+            const dy = target.y - crosshairY;
+            const len = Math.hypot(dx, dy) || 1;
+            const step = AIMBOT_SPEED * dt;
+            if (len <= step) {
+              crosshairX = target.x;
+              crosshairY = target.y;
+            } else {
+              crosshairX += (dx / len) * step;
+              crosshairY += (dy / len) * step;
+            }
+          }
+          const progress = 1 - timeLeftMs / GAME_DURATION_MS; // 0..1
+          const targetDelay = SPAWN_INITIAL_DELAY_MS - progress * (SPAWN_INITIAL_DELAY_MS - SPAWN_MIN_DELAY_MS);
+          spawnDelayMs += (targetDelay - spawnDelayMs) * 0.05; // smooth approach
+          if (spawnTimerMs >= spawnDelayMs) {
+            spawnTimerMs = 0;
+            spawnDuck();
+          }
+
+          // (No auto-fire; player clicks to shoot)
+
+          // Physics update: ducks
+          for (let i = ducks.length - 1; i >= 0; i--) {
+            const d = ducks[i];
+            d.x += d.vx * dt;
+            d.y += d.vy * dt + Math.sin(now * 0.004 + i) * 0.12;
+            // keep roughly within vertical bounds
+            if (d.y < 60) d.y = 60;
+            if (d.y > cssHeight - 120) d.y = cssHeight - 120;
+            // remove when off screen with margin
+            if ((d.vx > 0 && d.x - d.radius > cssWidth + 60) || (d.vx < 0 && d.x + d.radius < -60)) {
+              ducks.splice(i, 1);
+            }
+          }
+
+          // Particles
+          for (let i = particles.length - 1; i >= 0; i--) {
+            const p = particles[i];
+            p.life -= dt;
+            p.x += p.vx * dt;
+            p.y += p.vy * dt + 30 * dt; // gravity
+            p.vx *= 0.98;
+            p.vy *= 0.98;
+            if (p.life <= 0) particles.splice(i, 1);
+          }
+
+          // Render
+          ctx.clearRect(0, 0, cssWidth, cssHeight);
+          drawBackground();
+          for (const d of ducks) drawDuck(d);
+          drawParticles();
+          drawCrosshair(crosshairX, crosshairY);
+
+          if (timeLeftMs <= 0) {
+            endGame();
+            return;
+          }
+          requestAnimationFrame(tick);
+        }
+
+        function endGame() {
+          isRunning = false;
+          // Update high score
+          if (score > highScore) {
+            highScore = score;
+            localStorage.setItem("duck_hunt_high_score", String(highScore));
+            highEl.textContent = String(highScore);
+          }
+          // Show overlay with results
+          showGameOver();
+        }
+
+        function showGameOver() {
+          overlay.innerHTML = `
+            <div class="panel">
+              <h2 class="title">Time's Up!</h2>
+              <p class="subtitle">Final score: <strong style="color: var(--accent-2);">${score}</strong></p>
+              <div class="grid">
+                <div class="cell">High score: <strong style="color: var(--success);">${highScore}</strong></div>
+                <div class="cell">Ducks cleared: <strong>${Math.floor(score / 10)}</strong></div>
+                <div class="cell">Playtime: <strong>60s</strong></div>
+                <div class="cell">Tip: Aim slightly ahead of fast ducks</div>
+              </div>
+              <div class="btns">
+                <button id="restartBtn">Play Again</button>
+                <button class="secondary" id="menuBtn">Main Menu</button>
+              </div>
+            </div>
+          `;
+          overlay.classList.remove("hide");
+          document.getElementById("restartBtn").addEventListener("click", startGame);
+          document.getElementById("menuBtn").addEventListener("click", () => {
+            overlay.innerHTML = initialMenuHTML;
+            document.getElementById("startBtn").addEventListener("click", startGame);
+          });
+        }
+
+        const initialMenuHTML = document.getElementById("overlay").innerHTML;
+
+        /**
+         * Shooting mechanics
+         */
+        function attemptShotAt(mx, my) {
+          if (!isRunning) return;
+          // Recoil flash
+          flashAt(mx, my);
+          // Hit test
+          const hitIndex = ducks.findIndex((d) => {
+            const dx = mx - d.x;
+            const dy = my - d.y;
+            const r = d.radius * 0.95;
+            return dx * dx + dy * dy <= r * r;
+          });
+          if (hitIndex !== -1) {
+            const d = ducks[hitIndex];
+            ducks.splice(hitIndex, 1);
+            score += Math.max(10, Math.round(10 + Math.abs(d.vx) * 0.03));
+            scoreEl.textContent = String(score);
+            for (let i = 0; i < 14; i++) particles.push(new Particle(d.x, d.y, "#fff"));
+          } else {
+            for (let i = 0; i < 6; i++) particles.push(new Particle(mx, my, "#cbd5e1"));
+          }
+        }
+
+        function onMouseDown(evt) {
+          if (!isRunning) return;
+          if (evt.button === 2) {
+            aimbotActive = true;
+            evt.preventDefault();
+            return;
+          }
+          if (evt.button === 0) {
+            attemptShotAt(crosshairX, crosshairY);
+          }
+        }
+        function onMouseUp(evt) {
+          if (evt.button === 2) {
+            aimbotActive = false;
+          }
+        }
+        function onMouseLeave() {
+          aimbotActive = false;
+        }
+
+        canvas.addEventListener("mousedown", onMouseDown);
+        canvas.addEventListener("mouseup", onMouseUp);
+        canvas.addEventListener("mouseleave", onMouseLeave);
+
+        // Track mouse to move crosshair when not aimbotting
+        function onMouseMove(evt) {
+          const rect = canvas.getBoundingClientRect();
+          const mx = evt.clientX - rect.left;
+          const my = evt.clientY - rect.top;
+          if (!aimbotActive) {
+            crosshairX = Math.max(0, Math.min(cssWidth, mx));
+            crosshairY = Math.max(0, Math.min(cssHeight, my));
+          }
+        }
+        canvas.addEventListener("mousemove", onMouseMove);
+
+        // Crosshair drawing
+        function drawCrosshair(x, y) {
+          const r = 12;
+          ctx.save();
+          ctx.translate(x, y);
+          // outer glow
+          ctx.strokeStyle = "rgba(255,255,255,0.9)";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(0, 0, r, 0, Math.PI * 2);
+          ctx.stroke();
+          // ticks
+          ctx.beginPath();
+          ctx.moveTo(-r - 6, 0); ctx.lineTo(-4, 0);
+          ctx.moveTo(r + 6, 0); ctx.lineTo(4, 0);
+          ctx.moveTo(0, -r - 6); ctx.lineTo(0, -4);
+          ctx.moveTo(0, r + 6); ctx.lineTo(0, 4);
+          ctx.stroke();
+          // center dot
+          ctx.fillStyle = "#ffd166";
+          ctx.beginPath();
+          ctx.arc(0, 0, 2.4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+
+        function flashAt(x, y) {
+          // Quick muzzle flash effect overlayed on canvas
+          const flashLife = 120; // ms
+          const start = performance.now();
+          function drawFlash(now) {
+            const t = now - start;
+            if (t > flashLife) return;
+            const alpha = 1 - t / flashLife;
+            ctx.save();
+            ctx.globalCompositeOperation = "lighter";
+            const grad = ctx.createRadialGradient(x, y, 0, x, y, 40);
+            grad.addColorStop(0, `rgba(255,255,255,${(0.4 * alpha).toFixed(3)})`);
+            grad.addColorStop(1, "rgba(255,255,255,0)");
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(x, y, 40, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+            requestAnimationFrame(drawFlash);
+          }
+          requestAnimationFrame(drawFlash);
+        }
+
+        // Start at menu state
+        resetGame();
+      })();
+    </script>
+  </body>
+</html>
+
+
