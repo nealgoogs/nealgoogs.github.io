@@ -174,40 +174,46 @@
           </div>
         </div>
 
-        <div class="overlay" id="overlay">
-          <div class="panel">
-            <h2 class="title">Duck Hunt (Desktop)</h2>
-            <p class="subtitle">Left-click to shoot · Hold Right-click to aimbot the crosshair</p>
-            <div class="controls-layout">
-              <div class="control left"><span class="kbd">Left-click</span> · Shoot</div>
-              <div class="mouse-diagram">
-                <svg width="220" height="180" viewBox="0 0 220 180" aria-label="Mouse" role="img">
-                  <defs>
-                    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-                      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.35" />
-                    </filter>
-                  </defs>
-                  <g transform="translate(60,16)" filter="url(#shadow)">
-                    <rect x="0" y="0" rx="26" ry="26" width="100" height="150" fill="#1b2c3f" stroke="rgba(255,255,255,0.2)" />
-                    <path d="M0,28 h48 v46 h-48 z" fill="#ffd166" stroke="rgba(255,255,255,0.25)" />
-                    <path d="M52,28 h48 v46 h-48 z" fill="#27c2ff" stroke="rgba(255,255,255,0.25)" />
-                    <circle cx="50" cy="62" r="6" fill="#cbd5e1" />
-                  </g>
-                </svg>
-              </div>
-              <div class="control right"><span class="kbd">Right-click (hold)</span> · Aimbot</div>
-            </div>
-            <div class="btns">
-              <button id="startBtn">Start Game</button>
-              <button id="exitBtn" class="secondary" onclick="window.location.href='../index.html'">Exit to Main Page</button>
-            </div>
-            <p style="margin-top:12px; opacity:.8; font-size: 12px;">Desktop only · Fixed size 960×540</p>
-          </div>
-        </div>
-      </div>
-    </div>
+		<div class="overlay" id="overlay">
+		  <div class="panel">
+		    <h2 class="title">Duck Hunt (Desktop)</h2>
+		    <p class="subtitle">Left-click to shoot · Hold Right-click to aimbot the crosshair</p>
+		    <div class="controls-layout">
+		      <div class="control left"><span class="kbd">Left-click</span> · Shoot</div>
+		      <div class="mouse-diagram">
+		        <svg width="220" height="180" viewBox="0 0 220 180" aria-label="Mouse" role="img">
+		          <defs>
+		            <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+		              <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.35" />
+		            </filter>
+		          </defs>
+		          <g transform="translate(60,16)" filter="url(#shadow)">
+		            <rect x="0" y="0" rx="26" ry="26" width="100" height="150" fill="#1b2c3f" stroke="rgba(255,255,255,0.2)" />
+		            <path d="M0,28 h48 v46 h-48 z" fill="#ffd166" stroke="rgba(255,255,255,0.25)" />
+		            <path d="M52,28 h48 v46 h-48 z" fill="#27c2ff" stroke="rgba(255,255,255,0.25)" />
+		            <circle cx="50" cy="62" r="6" fill="#cbd5e1" />
+		          </g>
+		        </svg>
+		      </div>
+		      <div class="control right"><span class="kbd">Right-click (hold)</span> · Aimbot</div>
+		    </div>
+		    <div class="grid" style="grid-template-columns: 1fr;">
+		      <div class="cell">
+		        <label for="username" style="display:block;margin-bottom:6px;">Username</label>
+		        <input id="username" type="text" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:#e6f1ff;">
+		      </div>
+		    </div>
+		    <div class="btns">
+		      <button id="startBtn">Start Game</button>
+		      <button id="exitBtn" class="secondary" onclick="window.location.href='../index.html'">Exit to Main Page</button>
+		    </div>
+		    <p style="margin-top:12px; opacity:.8; font-size: 12px;">Desktop only · Fixed size 960×540</p>
+		  </div>
+		</div>
+
 
     <script>
+    
       (function () {
         "use strict";
 
@@ -235,7 +241,6 @@
          * Game state
          */
         const overlay = document.getElementById("overlay");
-        const startBtn = document.getElementById("startBtn");
         const scoreEl = document.getElementById("score");
         const timeEl = document.getElementById("time");
         const highEl = document.getElementById("high");
@@ -252,6 +257,37 @@
           rngSeed = (1103515245 * rngSeed + 12345) % 0x80000000;
           return rngSeed / 0x80000000;
         }
+
+        async function saveUser(name) {
+          const res = await fetch("http://localhost:8080/api/users", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name })
+          });
+          if (!res.ok) throw new Error("failed");
+        }
+
+        async function saveHighScore(name, score) {
+          await fetch("http://localhost:8080/api/users/score", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, score })
+          });
+        }
+        
+        var currentUsername = "";
+		document.getElementById("startBtn").addEventListener("click", function () {
+		  try {
+		    var input = document.getElementById("username");
+		    var name = input && input.value ? input.value.trim() : "";
+		    if (!name) { alert("Enter a username"); return; }
+		    currentUsername = name;
+		    startGame();
+		  } catch (e) {
+		    var msg = e && e.message ? e.message : "Unknown error";
+		    alert("Could not start the game. " + msg);
+		  }
+		});		        
 
         /**
          * Entities
@@ -298,7 +334,7 @@
         let crosshairX = cssWidth / 2;
         let crosshairY = cssHeight / 2;
         let aimbotActive = false;
-        const AIMBOT_SPEED = 1400; // px/s movement towards target
+        const AIMBOT_SPEED = 1000; // px/s movement towards target
 
         highEl.textContent = highScore.toString();
 
@@ -539,6 +575,10 @@
         }
 
         function endGame() {
+	        if (currentUsername) {
+	          saveHighScore(currentUsername, score).catch(function(){});
+	        }
+        
           isRunning = false;
           // Update high score
           if (score > highScore) {

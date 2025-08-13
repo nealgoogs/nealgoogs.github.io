@@ -1,8 +1,8 @@
+.git
+.gitignore
 bin/
 obj/
 .env
-.env.*
+appsettings.json
 secrets/
 data-private/
-appsettings.json
-node_modules/
