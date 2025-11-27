@@ -10,6 +10,15 @@
     portfolio website.
 */
 
+import posthog from 'posthog-js'
+
+posthog.init('phc_Od9zpynF0F1rNwvrtxn4t0h0GKuME455sAi1d2XC5hl',
+    {
+        api_host: 'https://us.i.posthog.com',
+        person_profiles: 'always' // or 'always' to create profiles for anonymous users as well
+    }
+)
+
 (function($) {
 
     // Show current year
