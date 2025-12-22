@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Sublet Swipe - Find Your Next Place</title>
+    <link rel="shortcut icon" href="../../favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            overflow: hidden;
+            touch-action: pan-y;
+        }
+
+        #root {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            max-width: 420px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .header-icon:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.1);
+        }
+
+        /* Cards Container */
+        .cards-container {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .card-stack {
+            position: relative;
+            width: 100%;
+            max-width: 350px;
+            height: 480px;
+        }
+
+        /* Sublet Card */
+        .sublet-card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            cursor: grab;
+            touch-action: none;
+            user-select: none;
+            will-change: transform;
+        }
+
+        .sublet-card:active {
+            cursor: grabbing;
+        }
+
+        .card-image {
+            width: 100%;
+            height: 60%;
+            object-fit: cover;
+            pointer-events: none;
+        }
+
+        .card-content {
+            padding: 20px;
+            height: 40%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+
+        .card-price span {
+            font-size: 1rem;
+            font-weight: 400;
+            color: #666;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-top: 5px;
+        }
+
+        .card-location {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .card-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: auto;
+        }
+
+        .tag {
+            padding: 6px 12px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: #555;
+            font-weight: 500;
+        }
+
+        /* Swipe Indicators */
+        .swipe-indicator {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            opacity: 0;
+            pointer-events: none;
+            border: 4px solid;
+        }
+
+        .swipe-indicator.like {
+            right: 20px;
+            color: #4ecdc4;
+            border-color: #4ecdc4;
+            transform: translateY(-50%) rotate(15deg);
+        }
+
+        .swipe-indicator.nope {
+            left: 20px;
+            color: #ff6b6b;
+            border-color: #ff6b6b;
+            transform: translateY(-50%) rotate(-15deg);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            padding: 20px;
+            padding-bottom: 30px;
+        }
+
+        .action-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .action-btn:hover {
+            transform: scale(1.15);
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-nope {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+            color: white;
+        }
+
+        .btn-super {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #5f9fff, #3b82f6);
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .btn-like {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: white;
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: white;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .empty-text {
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 30px;
+        }
+
+        .refresh-btn {
+            padding: 15px 40px;
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Matches Panel */
+        .matches-panel {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            max-width: 420px;
+            height: 100%;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            transition: right 0.3s ease;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .matches-panel.open {
+            right: calc(50% - 210px);
+        }
+
+        @media (max-width: 420px) {
+            .matches-panel.open {
+                right: 0;
+            }
+        }
+
+        .matches-header {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .matches-title {
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .matches-list {
+            padding: 20px;
+        }
+
+        .match-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .match-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .match-image {
+            width: 70px;
+            height: 70px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        .match-info {
+            flex: 1;
+            color: white;
+        }
+
+        .match-price {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .match-title {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 3px;
+        }
+
+        .match-location {
+            font-size: 0.8rem;
+            opacity: 0.6;
+            margin-top: 5px;
+        }
+
+        .no-matches {
+            color: rgba(255,255,255,0.5);
+            text-align: center;
+            padding: 40px;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useRef, useEffect } = React;
+
+        // Sample sublet data
+        const subletsData = [
+            {
+                id: 1,
+                price: 1200,
+                title: "Cozy Studio in Downtown",
+                location: "Downtown, Seattle",
+                image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop",
+                tags: ["Studio", "Furnished", "Utilities Inc."],
+                beds: 0,
+                baths: 1
+            },
+            {
+                id: 2,
+                price: 1850,
+                title: "Modern 1BR with City View",
+                location: "Capitol Hill, Seattle",
+                image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop",
+                tags: ["1 Bed", "Balcony", "In-unit Laundry"],
+                beds: 1,
+                baths: 1
+            },
+            {
+                id: 3,
+                price: 950,
+                title: "Private Room in Shared House",
+                location: "University District, Seattle",
+                image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop",
+                tags: ["Room", "Near Transit", "Pet Friendly"],
+                beds: 1,
+                baths: 1
+            },
+            {
+                id: 4,
+                price: 2400,
+                title: "Spacious 2BR Apartment",
+                location: "Ballard, Seattle",
+                image: "https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800&h=600&fit=crop",
+                tags: ["2 Bed", "Parking", "Gym Access"],
+                beds: 2,
+                baths: 1
+            },
+            {
+                id: 5,
+                price: 1100,
+                title: "Bright Basement Suite",
+                location: "Fremont, Seattle",
+                image: "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&h=600&fit=crop",
+                tags: ["1 Bed", "Private Entry", "Quiet"],
+                beds: 1,
+                baths: 1
+            },
+            {
+                id: 6,
+                price: 1650,
+                title: "Loft Style Living Space",
+                location: "SoDo, Seattle",
+                image: "https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=800&h=600&fit=crop",
+                tags: ["Loft", "High Ceilings", "Industrial"],
+                beds: 1,
+                baths: 1
+            },
+            {
+                id: 7,
+                price: 2100,
+                title: "Waterfront Condo",
+                location: "Alki Beach, Seattle",
+                image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop",
+                tags: ["2 Bed", "Ocean View", "Pool"],
+                beds: 2,
+                baths: 2
+            },
+            {
+                id: 8,
+                price: 875,
+                title: "Cozy Room Near Campus",
+                location: "U-District, Seattle",
+                image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800&h=600&fit=crop",
+                tags: ["Room", "Furnished", "Students OK"],
+                beds: 1,
+                baths: 1
+            }
+        ];
+
+        // Sublet Card Component
+        function SubletCard({ sublet, onSwipe, isTop, style }) {
+            const cardRef = useRef(null);
+            const [position, setPosition] = useState({ x: 0, y: 0 });
+            const [rotation, setRotation] = useState(0);
+            const [isDragging, setIsDragging] = useState(false);
+            const [likeOpacity, setLikeOpacity] = useState(0);
+            const [nopeOpacity, setNopeOpacity] = useState(0);
+            const startPos = useRef({ x: 0, y: 0 });
+
+            const handleStart = (clientX, clientY) => {
+                if (!isTop) return;
+                setIsDragging(true);
+                startPos.current = { x: clientX, y: clientY };
+            };
+
+            const handleMove = (clientX, clientY) => {
+                if (!isDragging || !isTop) return;
+
+                const deltaX = clientX - startPos.current.x;
+                const deltaY = clientY - startPos.current.y;
+
+                setPosition({ x: deltaX, y: deltaY });
+                setRotation(deltaX * 0.1);
+
+                // Update indicator opacity
+                if (deltaX > 0) {
+                    setLikeOpacity(Math.min(deltaX / 100, 1));
+                    setNopeOpacity(0);
+                } else {
+                    setNopeOpacity(Math.min(Math.abs(deltaX) / 100, 1));
+                    setLikeOpacity(0);
+                }
+            };
+
+            const handleEnd = () => {
+                if (!isDragging || !isTop) return;
+                setIsDragging(false);
+
+                const threshold = 100;
+
+                if (position.x > threshold) {
+                    animateSwipe('right');
+                } else if (position.x < -threshold) {
+                    animateSwipe('left');
+                } else {
+                    // Reset position
+                    setPosition({ x: 0, y: 0 });
+                    setRotation(0);
+                    setLikeOpacity(0);
+                    setNopeOpacity(0);
+                }
+            };
+
+            const animateSwipe = (direction) => {
+                const flyOut = direction === 'right' ? 500 : -500;
+                setPosition({ x: flyOut, y: position.y });
+                setRotation(flyOut * 0.1);
+
+                setTimeout(() => {
+                    onSwipe(direction, sublet);
+                }, 200);
+            };
+
+            // Touch events
+            const handleTouchStart = (e) => {
+                const touch = e.touches[0];
+                handleStart(touch.clientX, touch.clientY);
+            };
+
+            const handleTouchMove = (e) => {
+                const touch = e.touches[0];
+                handleMove(touch.clientX, touch.clientY);
+            };
+
+            const handleTouchEnd = () => handleEnd();
+
+            // Mouse events
+            const handleMouseDown = (e) => handleStart(e.clientX, e.clientY);
+            const handleMouseMove = (e) => {
+                if (isDragging) handleMove(e.clientX, e.clientY);
+            };
+            const handleMouseUp = () => handleEnd();
+            const handleMouseLeave = () => {
+                if (isDragging) handleEnd();
+            };
+
+            // Expose swipe function for buttons
+            useEffect(() => {
+                if (isTop && cardRef.current) {
+                    cardRef.current.triggerSwipe = (direction) => {
+                        if (direction === 'right') {
+                            setLikeOpacity(1);
+                        } else {
+                            setNopeOpacity(1);
+                        }
+                        animateSwipe(direction);
+                    };
+                }
+            }, [isTop]);
+
+            const cardStyle = {
+                transform: `translate(${position.x}px, ${position.y}px) rotate(${rotation}deg)`,
+                transition: isDragging ? 'none' : 'transform 0.3s ease',
+                zIndex: isTop ? 10 : 1,
+                ...style
+            };
+
+            return (
+                <div
+                    ref={cardRef}
+                    className="sublet-card"
+                    style={cardStyle}
+                    onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
+                    onMouseDown={handleMouseDown}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={handleMouseLeave}
+                    data-top={isTop}
+                >
+                    <img src={sublet.image} alt={sublet.title} className="card-image" />
+
+                    <div className="swipe-indicator like" style={{ opacity: likeOpacity }}>
+                        Like
+                    </div>
+                    <div className="swipe-indicator nope" style={{ opacity: nopeOpacity }}>
+                        Nope
+                    </div>
+
+                    <div className="card-content">
+                        <div className="card-price">${sublet.price}<span>/mo</span></div>
+                        <div className="card-title">{sublet.title}</div>
+                        <div className="card-location">
+                            <span>📍</span> {sublet.location}
+                        </div>
+                        <div className="card-tags">
+                            {sublet.tags.map((tag, i) => (
+                                <span key={i} className="tag">{tag}</span>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Main App
+        function App() {
+            const [cards, setCards] = useState([...subletsData]);
+            const [matches, setMatches] = useState([]);
+            const [showMatches, setShowMatches] = useState(false);
+                        const topCardRef = useRef(null);
+
+            const handleSwipe = (direction, sublet) => {
+                setCards(prev => prev.filter(c => c.id !== sublet.id));
+
+                if (direction === 'right') {
+                    setMatches(prev => [...prev, sublet]);
+                }
+            };
+
+            const handleButtonSwipe = (direction) => {
+                const topCard = document.querySelector('.sublet-card[data-top="true"]');
+                if (topCard && topCard.triggerSwipe) {
+                    topCard.triggerSwipe(direction);
+                }
+            };
+
+            const resetCards = () => {
+                setCards([...subletsData]);
+            };
+
+            const visibleCards = cards.slice(0, 3);
+
+            return (
+                <div className="app-container">
+                    {/* Header */}
+                    <header className="header">
+                        <div className="logo">SubletSwipe</div>
+                        <div className="header-icons">
+                            <div className="header-icon" onClick={() => setShowMatches(true)}>
+                                💝
+                            </div>
+                            <a href="../index.html" className="header-icon" style={{ textDecoration: 'none' }}>
+                                🏠
+                            </a>
+                        </div>
+                    </header>
+
+                    {/* Cards */}
+                    <div className="cards-container">
+                        {visibleCards.length > 0 ? (
+                            <div className="card-stack">
+                                {visibleCards.map((sublet, index) => (
+                                    <SubletCard
+                                        key={sublet.id}
+                                        sublet={sublet}
+                                        onSwipe={handleSwipe}
+                                        isTop={index === 0}
+                                        style={{
+                                            transform: `scale(${1 - index * 0.05}) translateY(${index * 10}px)`,
+                                            zIndex: visibleCards.length - index
+                                        }}
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="empty-state">
+                                <div className="empty-icon">🏠</div>
+                                <div className="empty-title">No More Sublets</div>
+                                <div className="empty-text">
+                                    You've seen all available listings. Check back later or refresh!
+                                </div>
+                                <button className="refresh-btn" onClick={resetCards}>
+                                    Start Over
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Action Buttons */}
+                    {visibleCards.length > 0 && (
+                        <div className="action-buttons">
+                            <button className="action-btn btn-nope" onClick={() => handleButtonSwipe('left')}>
+                                ✕
+                            </button>
+                            <button className="action-btn btn-super" onClick={() => handleButtonSwipe('right')}>
+                                ⭐
+                            </button>
+                            <button className="action-btn btn-like" onClick={() => handleButtonSwipe('right')}>
+                                ♥
+                            </button>
+                        </div>
+                    )}
+
+                    {/* Matches Panel */}
+                    <div className={`matches-panel ${showMatches ? 'open' : ''}`}>
+                        <div className="matches-header">
+                            <button className="back-btn" onClick={() => setShowMatches(false)}>
+                                ←
+                            </button>
+                            <div className="matches-title">Your Matches ({matches.length})</div>
+                        </div>
+                        <div className="matches-list">
+                            {matches.length > 0 ? (
+                                matches.map(match => (
+                                    <div key={match.id} className="match-item">
+                                        <img src={match.image} alt={match.title} className="match-image" />
+                                        <div className="match-info">
+                                            <div className="match-price">${match.price}/mo</div>
+                                            <div className="match-title">{match.title}</div>
+                                            <div className="match-location">📍 {match.location}</div>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="no-matches">
+                                    No matches yet. Keep swiping!
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
